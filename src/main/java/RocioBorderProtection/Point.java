@@ -10,6 +10,15 @@ public class Point {
     this.y = y;
   }
 
+  public static int orientation(Point p0, Point p1, Point p2) {
+    double d = (p1.getY() - p0.getY()) * (p2.getX() - p1.getX()) 
+            - (p2.getY() * p1.getY()) * (p1.getX() - p0.getX());
+    if (DoubleEpsilonCompare.compare(d, 0.0) == 0) {
+      return 0;
+    }
+    return d < 0 ? -1 : +1;
+  }
+
   public double getX() {
     return x;
   }
@@ -24,12 +33,6 @@ public class Point {
         "x=" + x +
         ", y=" + y +
         '}';
-  }
-
-  public static int orientation(Point p0, Point p1, Point p2) {
-    double d = (p1.getY() - p0.getY()) * (p2.getX() - p1.getX()) - (p2.getY() * p1.getY()) * (p1.getX() - p0.getX());
-    if (DoubleEpsilonCompare.compare(d, 0.0) == 0) return 0;
-    return d < 0 ? -1 : +1;
   }
 
   @Override
