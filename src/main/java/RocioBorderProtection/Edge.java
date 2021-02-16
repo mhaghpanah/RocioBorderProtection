@@ -2,15 +2,10 @@ package RocioBorderProtection;
 
 public class Edge {
 
-  public enum EdgeType {
-      INTERIOR, EXTERIOR, BOUNDARY
-  }
-
   private final Vertex u;
   private final Vertex v;
   private final double dist;
   private final EdgeType edgeType;
-
   public Edge(Vertex u, Vertex v, double dist, EdgeType edgeType) {
     this.u = u;
     this.v = v;
@@ -42,5 +37,9 @@ public class Edge {
         ", dist=" + dist +
         ", edgeType=" + edgeType +
         '}';
+  }
+
+  public enum EdgeType {
+    INTERIOR, EXTERIOR, BOUNDARY
   }
 }
