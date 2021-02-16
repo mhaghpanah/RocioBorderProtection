@@ -1,6 +1,11 @@
 package RocioBorderProtection;
 
-import static OrderTypeGraph.IpeDraw.*;
+import static OrderTypeGraph.IpeDraw.drawIpeMark;
+import static OrderTypeGraph.IpeDraw.drawIpePath;
+import static OrderTypeGraph.IpeDraw.getIpeConf;
+import static OrderTypeGraph.IpeDraw.getIpeEnd;
+import static OrderTypeGraph.IpeDraw.getIpePreamble;
+import static OrderTypeGraph.IpeDraw.writeIpeText;
 
 import OrderTypeGraph.MyFileWriter;
 import RocioBorderProtection.Edge.EdgeType;
@@ -58,7 +63,8 @@ public class MapDrawer {
     return mapDrawer.output();
   }
 
-  public static void drawAndWrite(List<Point> pointList, List<List<Edge>> path, String suffixPathOutput, boolean addText) {
+  public static void drawAndWrite(List<Point> pointList, List<List<Edge>> path,
+      String suffixPathOutput, boolean addText) {
     MyFileWriter.write(suffixPathOutput + ".ipe", MapDrawer.draw(pointList, path, addText));
   }
 
@@ -120,7 +126,6 @@ public class MapDrawer {
     String color = "red";
     String size = "normal";
 
-
     for (List<Edge> edgeList : path) {
       Vertex u = edgeList.get(0).getU();
       Point point = u.getPoint();
@@ -134,15 +139,15 @@ public class MapDrawer {
 
     for (List<Edge> edgeList : path) {
       for (Edge edge : edgeList) {
-       Point u = edge.getU().getPoint();
-       Point v = edge.getV().getPoint();
-       if (edge.getEdgeType().equals(EdgeType.BOUNDARY)) {
+        Point u = edge.getU().getPoint();
+        Point v = edge.getV().getPoint();
+        if (edge.getEdgeType().equals(EdgeType.BOUNDARY)) {
 //         String dash = dash_normal;
 //         drawEdge(u, v, color, pen, dash);
-       } else {
-         String dash = dash_normal;
-         drawEdge(u, v, color, pen, dash);
-       }
+        } else {
+          String dash = dash_normal;
+          drawEdge(u, v, color, pen, dash);
+        }
       }
     }
 
