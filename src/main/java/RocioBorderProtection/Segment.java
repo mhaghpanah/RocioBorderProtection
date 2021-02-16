@@ -13,13 +13,16 @@ public class Segment {
   Point p1;
 
   LineSegment lineSegment;
+
   public Segment(Point p0, Point p1) {
     this.p0 = p0;
     this.p1 = p1;
     lineSegment = new LineSegment(p0.getX(), p0.getY(), p1.getX(), p1.getY());
   }
 
-  public boolean isEmpty() { return DoubleEpsilonCompare.equals(lineSegment.getLength(), 0.0); }
+  public boolean isEmpty() {
+    return DoubleEpsilonCompare.equals(lineSegment.getLength(), 0.0);
+  }
 
   public double getLength() {
     return lineSegment.getLength();
