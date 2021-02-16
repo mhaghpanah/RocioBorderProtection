@@ -25,8 +25,14 @@ public class Hop {
     end = graph.getVertex(n - 1);
   }
 
+  public static List<List<Edge>> run(Graph graph, double capacity) {
+    Hop hop = new Hop(graph, capacity);
+    return hop.hopAlgorithm();
+  }
+
   public Map<Vertex, Edge> reachableVertexSet(Vertex v0) {
-    PriorityQueue<Pair<Vertex, Double>> pq = new PriorityQueue<>((a, b) -> Double.compare(a.getValue(), b.getValue()));
+    PriorityQueue<Pair<Vertex, Double>> pq = new PriorityQueue<>(
+        (a, b) -> Double.compare(a.getValue(), b.getValue()));
     Map<Vertex, Edge> parent = new HashMap<>();
     parent.put(v0, null);
     pq.add(new Pair<>(v0, Double.valueOf(0.0)));
@@ -71,7 +77,9 @@ public class Hop {
     Vertex nextWitness = null;
 
     for (Vertex v : set) {
-      if (curr.equals(v)) continue;
+      if (curr.equals(v)) {
+        continue;
+      }
       Vertex vWitness = farthestVertex(v);
       if (next == null || vWitness.getId() > nextWitness.getId()) {
         next = v;
@@ -117,11 +125,6 @@ public class Hop {
       curr = next;
     }
     return path;
-  }
-
-  public static List<List<Edge>> run(Graph graph, double capacity) {
-    Hop hop = new Hop(graph, capacity);
-    return hop.hopAlgorithm();
   }
 
 }
