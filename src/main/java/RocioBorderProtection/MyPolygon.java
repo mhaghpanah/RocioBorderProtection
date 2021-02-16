@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 
 public class MyPolygon {
+
   int n;
   List<Point> pointList;
 
@@ -27,7 +28,7 @@ public class MyPolygon {
 //    assert isSimple();
   }
 
-  private void  generatePolygon() {
+  private void generatePolygon() {
     Coordinate[] coordinates = new Coordinate[n + 1];
     for (int i = 0; i < n + 1; i++) {
       Point point = pointList.get(i);
@@ -51,7 +52,9 @@ public class MyPolygon {
     System.out.println(border);
   }
 
-  public int size() { return n;}
+  public int size() {
+    return n;
+  }
 
   public List<Point> subdivision(int index, double epsilon) {
 //    Segment segment = new Segment(pointList.get(index), pointList.get(index + 1));
