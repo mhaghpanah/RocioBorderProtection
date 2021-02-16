@@ -21,7 +21,6 @@ public class GraphGenerator {
     this.capacity = capacity;
     this.epsilon = epsilon;
 
-
 //    border = new ArrayList<>();
     myPolygon = new MyPolygon(pointList);
     graph = new Graph();
@@ -31,7 +30,6 @@ public class GraphGenerator {
     generateVertices();
     generateEdges();
   }
-
 
 //
 //  public boolean isSimple() {
@@ -54,6 +52,10 @@ public class GraphGenerator {
 //    return true;
 //  }
 
+  public static Graph GraphGenerator(List<Point> pointList, double unitDist, double eps) {
+    GraphGenerator gg = new GraphGenerator(pointList, unitDist, eps);
+    return gg.graph;
+  }
 
   private void generateVertices() {
     int n = myPolygon.size();
@@ -87,7 +89,9 @@ public class GraphGenerator {
   public boolean isLeftSide(int i, int j, Segment segment) {
     for (int k = i + 1; k < j; k++) {
       Vertex v = graph.getVertex(k);
-      if (segment.side(v.getPoint()) <= 0) return false;
+      if (segment.side(v.getPoint()) <= 0) {
+        return false;
+      }
     }
     return true;
   }
@@ -100,12 +104,17 @@ public class GraphGenerator {
         Vertex v = graph.getVertex(j);
         Segment segment = new Segment(u.getPoint(), v.getPoint());
         double len = segment.getLength();
-        if (u.getSubdivisionId() == v.getSubdivisionId() || (u.getSubdivisionId() + 1 == v.getSubdivisionId() && i + 1 == j)) {
+        if (u.getSubdivisionId() == v.getSubdivisionId() ||
+            (u.getSubdivisionId() + 1 == v.getSubdivisionId() && i + 1 == j)) {
           if (j == i + 1) {
             Edge edge = new Edge(u, v, len, EdgeType.BOUNDARY);
             graph.addEdge(edge);
           }
-        } else if (DoubleEpsilonCompare.compare(len, 0) > 0 && DoubleEpsilonCompare.compare(len, capacity) < 0 && myPolygon.isSegmentVisible(segment) && myPolygon.isSegmentOutside(segment) && isLeftSide(i, j, segment)) {
+        } else if (DoubleEpsilonCompare.compare(len, 0) > 0 && 
+            DoubleEpsilonCompare.compare(len, capacity) < 0 && 
+            myPolygon.isSegmentVisible(segment) && 
+            myPolygon.isSegmentOutside(segment) && 
+            isLeftSide(i, j, segment)) {
           Edge edge = new Edge(u, v, len, EdgeType.EXTERIOR);
           graph.addEdge(edge);
         }
@@ -113,11 +122,6 @@ public class GraphGenerator {
       }
     }
     System.out.printf("sz: %d\n", graph.edgeSize());
-  }
-
-  public static Graph GraphGenerator(List<Point> pointList, double unitDist, double eps) {
-    GraphGenerator gg = new GraphGenerator(pointList, unitDist, eps);
-    return gg.graph;
   }
 
 }
