@@ -28,14 +28,12 @@ public class Graph {
     return adjacencyMap;
   }
 
-  public List<Point> getPointList() {
+  public Points getPoints() {
     List<Point> ans = new ArrayList<>();
     for (Vertex vertex : getVertexList()) {
       ans.add(vertex.getPoint());
     }
-
-    System.out.printf("getPointList: %s\n", ans);
-    return ans;
+    return Points.getInstance(ans);
   }
 
   public Vertex getVertex(int index) {
