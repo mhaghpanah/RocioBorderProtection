@@ -21,4 +21,28 @@ public class Pair<K, V> {
   public V getValue() {
     return v;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Pair)) {
+      return false;
+    }
+
+    Pair<?, ?> pair = (Pair<?, ?>) o;
+
+    if (!k.equals(pair.k)) {
+      return false;
+    }
+    return v != null ? v.equals(pair.v) : pair.v == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = k.hashCode();
+    result = 31 * result + (v != null ? v.hashCode() : 0);
+    return result;
+  }
 }
