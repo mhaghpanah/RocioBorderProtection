@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Hop {
 
   Graph graph;
   double capacity;
+  double INF;
   int n;
   Vertex start;
   Vertex end;
@@ -19,10 +20,12 @@ public class Hop {
   public Hop(Graph graph, double capacity) {
     this.graph = graph;
     this.capacity = capacity;
+    INF = 2 * capacity + 1_000.0;
 
     n = graph.vertexSize();
     start = graph.getVertex(0);
     end = graph.getVertex(n - 1);
+    assert start.getPoint().equals(end.getPoint());
   }
 
   public static List<List<Edge>> run(Graph graph, double capacity) {
@@ -31,25 +34,38 @@ public class Hop {
   }
 
   public Map<Vertex, Edge> reachableVertexSet(Vertex v0) {
-    PriorityQueue<Pair<Vertex, Double>> pq = new PriorityQueue<>(
-        (a, b) -> Double.compare(a.getValue(), b.getValue()));
+    TreeSet<Pair<Vertex, Double>> set = new TreeSet<>(
+        (a, b) -> Double.compare(a.getValue(), b.getValue()) == 0 ?
+            a.getKey().getId() - b.getKey().getId() : Double.compare(a.getValue(), b.getValue()));
     Map<Vertex, Edge> parent = new HashMap<>();
+    Map<Vertex, Double> distance = new HashMap<>();
+
     parent.put(v0, null);
-    pq.add(new Pair<>(v0, Double.valueOf(0.0)));
-    while (!pq.isEmpty()) {
-      Pair<Vertex, Double> top = pq.remove();
+    distance.put(v0, 0.0);
+    set.add(Pair.getInstance(v0, 0.0));
+
+    while (!set.isEmpty()) {
+      Pair<Vertex, Double> top = set.pollFirst();
+      assert top != null;
       Vertex u = top.getKey();
+      double d = top.getValue();
 
       for (Edge edge : graph.neighbours(u)) {
-        double dist = edge.getDist() + top.getValue();
+        double len = edge.getDist() + d;
         Vertex v = edge.getV();
 
         assert u.getId() >= v0.getId();
         assert v.getId() > u.getId();
+        if (DoubleEpsilonCompare.compare(len, capacity) > 0) {
+          continue;
+        }
 
-        if (DoubleEpsilonCompare.compare(dist, capacity) <= 0 && !parent.containsKey(v)) {
+        if (DoubleEpsilonCompare.compare(len, distance.getOrDefault(v, INF)) <= 0) {
+          set.remove(Pair.getInstance(v, distance.getOrDefault(v, INF)));
+
+          distance.put(v, len);
           parent.put(v, edge);
-          pq.add(new Pair<>(v, dist));
+          set.add(Pair.getInstance(v, distance.get(v)));
         }
       }
     }
@@ -73,6 +89,9 @@ public class Hop {
 
   public Vertex selectNextVertex(Vertex curr, Map<Vertex, Edge> parent) {
     Set<Vertex> set = parent.keySet();
+    if (parent.containsKey(end)) {
+      return end;
+    }
     Vertex next = null;
     Vertex nextWitness = null;
 
@@ -101,22 +120,17 @@ public class Hop {
   }
 
   public List<List<Edge>> hopAlgorithm() {
-    int n = graph.vertexSize();
     Vertex curr = graph.getVertex(0);
-//    Vertex last = graph.getVertex(n - 1);
-
     List<List<Edge>> path = new ArrayList<>();
 
     while (!curr.equals(end)) {
-      System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      System.out.printf("curr: %s\n", curr);
+      System.err.println("--------------------------------");
+      System.err.printf("curr: %s\n", curr);
       Map<Vertex, Edge> parent = reachableVertexSet(curr);
-
-      System.out.printf("parent: %s\n", parent);
 
       Vertex next = selectNextVertex(curr, parent);
 
-      System.out.printf("next: %s\n", next);
+      System.err.printf("next: %s\n", next);
 
       List<Edge> p = generatePath(curr, next, parent);
       path.add(p);
