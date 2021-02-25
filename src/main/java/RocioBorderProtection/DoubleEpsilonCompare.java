@@ -19,7 +19,7 @@ public class DoubleEpsilonCompare {
   }
 
   public static int sign(final double a) {
-    return Double.compare(a, 0.0);
+    return DoubleEpsilonCompare.compare(a, 0.0);
   }
 
 }
