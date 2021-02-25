@@ -5,11 +5,13 @@ public class Vertex {
   private final Point point;
   private final int subdivisionId;
   private final int id;
+  private final boolean isOnConvexHull;
 
-  public Vertex(int id, Point point, int subdivisionId) {
+  public Vertex(int id, Point point, int subdivisionId, boolean isOnConvexHull) {
+    this.id = id;
     this.point = point;
     this.subdivisionId = subdivisionId;
-    this.id = id;
+    this.isOnConvexHull = isOnConvexHull;
   }
 
   public int getSubdivisionId() {
@@ -24,11 +26,15 @@ public class Vertex {
     return id;
   }
 
+  public boolean isOnConvexHull() {
+    return isOnConvexHull;
+  }
+
   @Override
   public String toString() {
     return "Vertex{" +
-        "point=" + point +
-        ", id=" + id +
+//        "point=" + point +
+        "id=" + id +
         '}';
   }
 
@@ -49,6 +55,9 @@ public class Vertex {
     if (id != vertex.id) {
       return false;
     }
+    if (isOnConvexHull != vertex.isOnConvexHull) {
+      return false;
+    }
     return point.equals(vertex.point);
   }
 
@@ -57,6 +66,7 @@ public class Vertex {
     int result = point.hashCode();
     result = 31 * result + subdivisionId;
     result = 31 * result + id;
+    result = 31 * result + (isOnConvexHull ? 1 : 0);
     return result;
   }
 }
