@@ -1,74 +1,67 @@
 package RocioBorderProtection;
 
-import OrderTypeGraph.MyFile.Address;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class SandBox {
 
-  public static List<Point> readPoints(String suffixPath) throws FileNotFoundException {
-    File myFile = OrderTypeGraph.MyFile.getInstance(suffixPath, Address.RESOURCE);
-    Scanner scanner = new Scanner(myFile);
-    int n = scanner.nextInt();
-    List<Point> pointList = new ArrayList<>();
-    for (int i = 0; i < n; i++) {
-      double x = scanner.nextDouble();
-      double y = scanner.nextDouble();
-      Point point = new Point(x, y);
-      pointList.add(point);
-    }
-    System.out.println("################################################");
-    System.out.println(pointList);
-    return pointList;
+  public static Graph generateAndDraw(Points points, double capacity, double epsilon,
+      String suffixPath) {
+
+    MapDrawer.drawAndWrite(points, String.format("%s_original_points", suffixPath), true);
+
+    Graph graph = GraphGenerator.generate(points, capacity, epsilon);
+    MapDrawer.drawAndWrite(graph.getPoints(),
+        String.format("%s_graph_cap%f_eps%f", suffixPath, capacity, epsilon), false);
+
+    return graph;
   }
 
-  public static void generateAndDraw(String suffixPath) throws FileNotFoundException {
-    List<Point> pointList = readPoints(suffixPath);
-    System.out.println(pointList);
-    MapDrawer.drawAndWrite(pointList, "salamis", true);
-
-    double epsilon = 0.01;
-    double capacity = 10 * epsilon;
-    Graph graph = GraphGenerator.GraphGenerator(pointList, capacity, epsilon);
-    MapDrawer.drawAndWrite(graph.getPointList(), "salamis2", false);
-    System.out.println("---------------------------");
-    System.out.println(graph.getPointList());
-    System.out.println(graph.getPointList().size());
-  }
-
-  public static void runHop(String suffixPath) throws FileNotFoundException {
-    List<Point> pointList = readPoints(suffixPath);
-    System.out.println(pointList);
-    MapDrawer.drawAndWrite(pointList, "salamis", true);
-
-    double epsilon = 0.00001;
-    double capacity = 1000 * epsilon;
-    Graph graph = GraphGenerator.GraphGenerator(pointList, capacity, epsilon);
-    MapDrawer.drawAndWrite(graph.getPointList(), "salamis2", true);
-    System.out.println("---------------------------");
-    System.out.println(graph.getPointList());
-    System.out.println(graph.getPointList().size());
-//    System.out.println(graph);
+  public static void runHop(Graph graph, double capacity, String suffixPath) {
 
     List<List<Edge>> path = Hop.run(graph, capacity);
-    System.out.printf("Path length: %d\n", path.size());
-    for (List<Edge> p : path) {
-      System.out.println("$$$$$$$$$$$$$$");
-      System.out.println(p);
+
+    MapDrawer.drawAndWrite(graph.getPoints(), path,
+        String.format("%s_2hop_cap%f_sz%d_old", suffixPath, capacity, path.size()), true);
+
+    MapDrawer.drawAndWrite(graph, path,
+        String.format("%s_2hop_cap%f_sz%d", suffixPath, capacity, path.size()), true);
+
+  }
+
+  public static void exp(Points points, double epsilon, String suffixPath) {
+    double c = 5 * epsilon;
+    for (int i = 0; i < 12; i++) {
+      double capacity = c * Math.pow(2, i);
+      Graph graph = generateAndDraw(points, capacity, epsilon, suffixPath);
+      runHop(graph, capacity, suffixPath);
     }
-
-    MapDrawer.drawAndWrite(graph.getPointList(), path, "salamis3", false);
-
   }
 
   public static void main(String[] args) throws Exception {
-    String suffixPath = "salamis.txt";
-//    readPoints(suffixPath);
-//    generateAndDraw(suffixPath);
-    runHop(suffixPath);
+    String island = "salamis";
+    String suffixFilePath = String.format("%s.txt", island);
+
+    double epsilon = 0.001;
+    double capacity = 10000 * epsilon;
+
+    Points points = PrecisionReadPoints.inexactRead(suffixFilePath);
+
+    Graph graph = generateAndDraw(points, capacity, epsilon, island);
+    runHop(graph, capacity, island);
+
+    exp(points, epsilon, island);
+
+//    MyPolygon myPolygon = new MyPolygon(points);
+//    MyPolygon convexHull = new MyPolygon(myPolygon.generateConvexHull());
+//    System.out.println(convexHull.perimeter());
+//
+//
+//    for (int i = -2; i <= 2; i++) {
+//      capacity = convexHull.perimeter() + i * epsilon;
+//      Graph graph = generateAndDraw(points, capacity, epsilon, island);
+//      runHop(graph, capacity, island);
+//    }
+
   }
 
 }
