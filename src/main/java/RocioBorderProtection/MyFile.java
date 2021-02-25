@@ -5,13 +5,8 @@ import java.io.IOException;
 
 public class MyFile {
 
-  public enum Address {
-    ROOT, RESULTS, RESOURCE
-  }
-
   private String pathname;
   private File file;
-
   public MyFile(String suffixPath, Address prefix) {
     if (prefix == Address.ROOT) {
       pathname = suffixPath;
@@ -69,6 +64,10 @@ public class MyFile {
       e.printStackTrace();
       System.exit(1);
     }
+  }
+
+  public enum Address {
+    ROOT, RESULTS, RESOURCE
   }
 
 }
