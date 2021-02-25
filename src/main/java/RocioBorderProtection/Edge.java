@@ -6,6 +6,7 @@ public class Edge {
   private final Vertex v;
   private final double dist;
   private final EdgeType edgeType;
+
   public Edge(Vertex u, Vertex v, double dist, EdgeType edgeType) {
     this.u = u;
     this.v = v;
