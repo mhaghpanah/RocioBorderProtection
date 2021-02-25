@@ -18,4 +18,8 @@ public class DoubleEpsilonCompare {
     return a < b ? -1 : +1;
   }
 
+  public static int sign(final double a) {
+    return Double.compare(a, 0.0);
+  }
+
 }
