@@ -9,10 +9,10 @@ import org.locationtech.jts.geom.LineSegment;
 
 public class Segment {
 
-  Point p0;
-  Point p1;
+  private final Point p0;
+  private final Point p1;
 
-  LineSegment lineSegment;
+  private final LineSegment lineSegment;
 
   public Segment(Point p0, Point p1) {
     this.p0 = p0;
@@ -28,28 +28,37 @@ public class Segment {
     return lineSegment.getLength();
   }
 
-  public LineSegment getLineSegment() {
-    return lineSegment;
-  }
-
-//  public Point midPoint() {
-//    Coordinate c = lineSegment.midPoint();
-//    return new Point(c.getX(), c.getY());
-//  }
-
   public boolean isIntersect(Segment segment) {
     LineIntersector lineIntersector = new RobustLineIntersector();
 
     LineSegment l0 = this.lineSegment;
     LineSegment l1 = segment.lineSegment;
 
-    Coordinate p0 = l0.p0;
-    Coordinate p1 = l0.p1;
-    Coordinate p2 = l1.p0;
-    Coordinate p3 = l1.p1;
+    Coordinate[] cs = new Coordinate[]{l0.p0, l0.p1, l1.p0, l1.p1};
 
-    lineIntersector.computeIntersection(p0, p1, p2, p3);
-    return lineIntersector.isInteriorIntersection();
+    lineIntersector.computeIntersection(cs[0], cs[1], cs[2], cs[3]);
+
+    if (!lineIntersector.hasIntersection()) {
+      return false;
+    }
+
+    Coordinate intersection = lineIntersector.getIntersection(0);
+    Point point = Point.getInstance(intersection.getX(), intersection.getY());
+    double dist = Double.MAX_VALUE;
+    for (int i = 0; i < 4; i++) {
+      Point point1 = Point.getInstance(cs[i].getX(), cs[i].getY());
+      dist = Math.min(dist, point.dist(point1));
+    }
+//    System.err.println(dist);
+    return DoubleEpsilonCompare.compare(dist, 0.0) != 0;
+
+//    return lineIntersector.isInteriorIntersection();
+
+//    Segment a = this;
+//    Segment b = segment;
+//    if (Point.ccw(a.p0, a.p1, b.p0) * Point.ccw(a.p0, a.p1, b.p1) >= 0) return false;
+//    if (Point.ccw(b.p0, b.p1, a.p0) * Point.ccw(b.p0, b.p1, a.p1) >= 0) return false;
+//    return true;
   }
 
 
@@ -61,16 +70,13 @@ public class Segment {
     for (int i = 0; i <= m; i++) {
       double segmentLengthFraction = i * eps / length;
       Coordinate coordinate = lineSegment.pointAlong(segmentLengthFraction);
-      Point point = new Point(coordinate.getX(), coordinate.getY());
-      ans.add(point);
+      ans.add(Point.getInstance(coordinate.getX(), coordinate.getY()));
     }
     return ans;
   }
 
   public int side(Point point) {
-//    Coordinate coordinate = new Coordinate(point.getX(), point.getY());
-//    return lineSegment.orientationIndex(coordinate);
-    return Point.orientation(p0, point, p1);
+    return Point.ccw(p0, p1, point);
   }
 
   @Override
@@ -91,15 +97,6 @@ public class Segment {
   public int hashCode() {
     return lineSegment.hashCode();
   }
-
-//  public static void main(String[] args) {
-//    double eps = 1.0;
-//    Point p0 = new Point(0, 0);
-//    Point p1 = new Point(10.1, 0);
-//    Segment segment = new Segment(p0, p1);
-//    List<Point> pointList = segment.subdivision(eps);
-//    System.out.println(pointList);
-//  }
 
   @Override
   public String toString() {
