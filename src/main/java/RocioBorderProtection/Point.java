@@ -10,9 +10,14 @@ public class Point {
     this.y = y;
   }
 
-  public static int orientation(Point p0, Point p1, Point p2) {
-    double d = (p1.getY() - p0.getY()) * (p2.getX() - p1.getX()) 
-            - (p2.getY() * p1.getY()) * (p1.getX() - p0.getX());
+  public static Point getInstance(double x, double y) {
+    return new Point(x, y);
+  }
+
+  public static int ccw(Point a, Point b, Point c) {
+    double d = (b.getX() - a.getX()) * (c.getY() - a.getY())
+        -
+        (c.getX() - a.getX()) * (b.getY() - a.getY());
     if (DoubleEpsilonCompare.compare(d, 0.0) == 0) {
       return 0;
     }
@@ -25,6 +30,21 @@ public class Point {
 
   public double getY() {
     return y;
+  }
+
+  public Point diff(Point other) {
+    double x = getX() - other.getX();
+    double y = getY() - other.getY();
+    return getInstance(x, y);
+  }
+
+  public double len2() {
+    return getX() * getX() + getY() * getY();
+  }
+
+  public double dist(Point other) {
+    Point d = diff(other);
+    return d.len2();
   }
 
   @Override
