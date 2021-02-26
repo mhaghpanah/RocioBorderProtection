@@ -66,9 +66,9 @@ public class Segment {
     List<Point> ans = new ArrayList<>();
 
     double length = getLength();
-    int m = (int) Math.floor(length / eps);
-    for (int i = 0; i <= m; i++) {
-      double segmentLengthFraction = i * eps / length;
+    int m = (int) Math.ceil(length / eps);
+    for (int i = 0; i < m; i++) {
+      double segmentLengthFraction = (double)i / (double)m;
       Coordinate coordinate = lineSegment.pointAlong(segmentLengthFraction);
       ans.add(Point.getInstance(coordinate.getX(), coordinate.getY()));
     }
