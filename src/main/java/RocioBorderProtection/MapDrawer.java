@@ -13,14 +13,28 @@ import java.util.List;
 
 public class MapDrawer {
 
+  private static final String blackColor = "black";
+  private static final String blueColor = "blue";
+  private static final String redColor = "red";
+  private static final String seagreenColor = "seagreen";
+  private static final String greenColor = "green";
+
+  private static final String normalDash = "normal";
+  private static final String dashedDash = "dashed";
+  private static final String dottedDash = "dotted";
+  
+  private static final String defaultShape = "disk";
+  private static final String defaultColor = blackColor;
+  private static final String defaultSize = "normal";
+  private static final String defaultPen = "normal";
+  private static final String defaultDash = normalDash;
+  
   final double drawSize = 700;
   final double o = 200;
 
-  double scaleFactor;
-  double minX;
-  double minY;
-  double maxX;
-  double maxY;
+  private final double scaleFactor;
+  private double minX;
+  private double minY;
 
   StringBuilder output;
 
@@ -41,13 +55,6 @@ public class MapDrawer {
     output.append(getIpeConf());
     drawPoints(points);
     drawPolygonEdges(points);
-
-//    String color = "red";
-//    String pen = "normal";
-//    String dash = "normal";
-//
-//    drawEdge(points.get(591), points.get(592), color, pen, dash);
-//    drawEdge(points.get(592), points.get(593), color, pen, dash);
 
 //    output.append(getIpeEnd());
   }
@@ -71,15 +78,12 @@ public class MapDrawer {
     output.append(getIpeConf());
     drawVertexes(graph.getVertexList());
     drawPolygonEdges(points);
-
-//    List<List<Edge>> ll = new ArrayList<>();
-//    ll.add(graph.getAdjacencyMap().get(graph.getVertex(1369)));
-//    drawEdges(ll);
+    
     drawEdges(graph.getAdjacencyMap().values());
     drawPath(path);
 
-    MyPolygon myPolygon = new MyPolygon(points);
-    drawConvexHull(myPolygon.generateConvexHull());
+//    MyPolygon myPolygon = new MyPolygon(points);
+//    drawConvexHull(myPolygon.generateConvexHull());
 
   }
 
@@ -115,8 +119,8 @@ public class MapDrawer {
   private double computeScaleFactor(Points points) {
     minX = Long.MAX_VALUE;
     minY = Long.MAX_VALUE;
-    maxX = Long.MIN_VALUE;
-    maxY = Long.MIN_VALUE;
+    double maxX = Long.MIN_VALUE;
+    double maxY = Long.MIN_VALUE;
     for (Point point : points.getPointList()) {
       minX = Math.min(minX, point.getX());
       minY = Math.min(minY, point.getY());
@@ -165,31 +169,20 @@ public class MapDrawer {
   }
 
   private void drawPoints(Points points) {
-    String shape = "disk";
-    String color = "black";
-    String size = "normal";
-
-    drawPoints(points, shape, color, size);
+    drawPoints(points, defaultShape, defaultColor, defaultSize);
   }
 
 
   private void drawVertexes(List<Vertex> vertexList) {
-    String shape = "disk";
-    String colorBlack = "black";
-    String colorBlue = "blue";
-    String size = "normal";
-
     int index = 0;
     for (Vertex vertex : vertexList) {
       Point point = vertex.getPoint();
+      String color = vertex.isOnConvexHull() ? blueColor : blackColor;
 
-      String color = vertex.isOnConvexHull() ? colorBlue : colorBlack;
-//      if (vertex.getId() == 1369 || (1380 <= vertex.getId() && vertex.getId() <= 1384)) color = "red";
-
-      drawPoint(point, shape, color, size);
+      drawPoint(point, defaultShape, color, defaultSize);
       if (addText) {
         if (index % 5 == 0) {
-          drawText(Integer.toString(index), point, color, size);
+          drawText(Integer.toString(index), point, color, defaultSize);
         }
         index++;
       }
@@ -212,19 +205,16 @@ public class MapDrawer {
       Point u = points.get(i);
       Point v = points.get(i + 1);
 //      if (i % 2 == 0) {
-//        color = "green";
+//        color = greenColor;
 //      } else {
-//        color = "red";
+//        color = redColor;
 //      }
       drawEdge(u, v, color, pen, dash);
     }
   }
 
   private void drawPolygonEdges(Points points) {
-    String color = "black";
-    String pen = "normal";
-    String dash = "normal";
-    drawPolygonEdges(points, color, pen, dash);
+    drawPolygonEdges(points, defaultColor, defaultPen, defaultDash);
   }
 
 
@@ -240,45 +230,33 @@ public class MapDrawer {
   }
 
   private void drawEdges(Collection<List<Edge>> edges) {
-    String color = "black";
-    String pen = "normal";
-    String dash = "normal";
-    drawEdges(edges, color, pen, dash);
+    drawEdges(edges, defaultColor, defaultPen, defaultDash);
   }
 
   private void drawPath(List<List<Edge>> path) {
-    String shape = "disk";
-    String color = "red";
-    String size = "normal";
+    String color = redColor;
 
     int index = 0;
     for (List<Edge> edgeList : path) {
       Vertex u = edgeList.get(0).getU();
       Point point = u.getPoint();
-      drawPoint(point, shape, color, size);
+      drawPoint(point, defaultShape, color, defaultSize);
 
       if (addText) {
         if (index % 10 == 0) {
-          drawText(Integer.toString(index), point, color, size);
+          drawText(Integer.toString(index), point, color, defaultSize);
         }
         index++;
       }
     }
 
-    String pen = "normal";
-    String dash_normal = "normal";
-//    String dash_dashed = "dashed";
-    String dash_dotted = "dotted";
-
     for (List<Edge> edgeList : path) {
       for (Edge edge : edgeList) {
         Point u = edge.getU().getPoint();
         Point v = edge.getV().getPoint();
-        if (edge.getEdgeType().equals(EdgeType.BOUNDARY)) {
-          drawEdge(u, v, color, pen, dash_dotted);
-        } else {
-          drawEdge(u, v, color, pen, dash_normal);
-        }
+
+        String dash = edge.getEdgeType().equals(EdgeType.BOUNDARY) ? dottedDash : normalDash;
+        drawEdge(u, v, color, defaultPen, dash);
       }
     }
 
@@ -286,15 +264,12 @@ public class MapDrawer {
 
 
   private void drawConvexHull(Points points) {
-//    String shape = "disk";
-//    String colorPoints = "seagreen";
-//    String size = "normal";
-//    drawPoints(points, shape, colorPoints, size);
+    String color = seagreenColor;
+    String dash = dashedDash;
 
-    String colorEdges = "seagreen";
-    String pen = "normal";
-    String dash = "dashed";
-    drawPolygonEdges(points, colorEdges, pen, dash);
+//    drawPoints(points, defaultShape, color, defaultSize);
+    
+    drawPolygonEdges(points, color, defaultPen, dash);
 
   }
 
