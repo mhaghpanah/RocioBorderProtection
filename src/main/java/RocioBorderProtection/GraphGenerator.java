@@ -72,7 +72,7 @@ public class GraphGenerator {
 //  }
 
   public double curve(Point a, Point b) {
-    return (b.getX() - a.getX()) * (a.getY() + b.getY());
+    return (b.x() - a.x()) * (a.y() + b.y());
   }
 
   public boolean isCCWSubChain(int i, int j) {
