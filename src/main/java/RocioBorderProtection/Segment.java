@@ -17,7 +17,7 @@ public class Segment {
   public Segment(Point p0, Point p1) {
     this.p0 = p0;
     this.p1 = p1;
-    lineSegment = new LineSegment(p0.getX(), p0.getY(), p1.getX(), p1.getY());
+    lineSegment = new LineSegment(p0.x(), p0.y(), p1.x(), p1.y());
   }
 
   public boolean isEmpty() {
