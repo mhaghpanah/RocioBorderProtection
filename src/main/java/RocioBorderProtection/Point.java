@@ -15,31 +15,27 @@ public class Point {
   }
 
   public static int ccw(Point a, Point b, Point c) {
-    double d = (b.getX() - a.getX()) * (c.getY() - a.getY())
-        -
-        (c.getX() - a.getX()) * (b.getY() - a.getY());
-    if (DoubleEpsilonCompare.compare(d, 0.0) == 0) {
+    double area2 = (b.x-a.x)*(c.y- a.y)-(c.x-a.x)*(b.y-a.y);
+    if (DoubleEpsilonCompare.compare(area2, 0.0) == 0) {
       return 0;
     }
-    return d < 0 ? -1 : +1;
+    return area2 < 0 ? -1 : +1;
   }
 
-  public double getX() {
-    return x;
-  }
+  public double x() { return x; }
 
-  public double getY() {
+  public double y() {
     return y;
   }
 
   public Point diff(Point other) {
-    double x = getX() - other.getX();
-    double y = getY() - other.getY();
+    double x = this.x - other.x;
+    double y = this.y - other.y;
     return getInstance(x, y);
   }
 
   public double len2() {
-    return getX() * getX() + getY() * getY();
+    return x*x + y*y;
   }
 
   public double dist(Point other) {
