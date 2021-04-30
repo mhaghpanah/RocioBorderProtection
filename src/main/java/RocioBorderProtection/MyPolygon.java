@@ -40,7 +40,7 @@ public class MyPolygon {
     Coordinate[] coordinates = new Coordinate[n + 1];
     for (int i = 0; i < n + 1; i++) {
       Point point = points.get(i);
-      coordinates[i] = new Coordinate(point.getX(), point.getY());
+      coordinates[i] = new Coordinate(point.x(), point.y());
     }
     polygon = geometryFactory.createPolygon(coordinates);
   }
@@ -113,7 +113,7 @@ public class MyPolygon {
     for (int i = 0; i < m - 1; i++) {
       Point u = convexHull.get(i);
       Point v = convexHull.get(i + 1);
-      if (DoubleEpsilonCompare.sign(Point.ccw(point, u, v)) == 0) {
+      if (DoubleEpsilonCompare.sign(Point.ccw(u, point, v)) == 0) {
         return true;
       }
     }
