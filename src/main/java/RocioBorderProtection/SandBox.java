@@ -20,8 +20,8 @@ public class SandBox {
 
     List<List<Edge>> path = Hop.run(graph, capacity);
 
-    MapDrawer.drawAndWrite(graph.getPoints(), path,
-        String.format("%s_2hop_cap%f_sz%d_old", suffixPath, capacity, path.size()), true);
+//    MapDrawer.drawAndWrite(graph.getPoints(), path,
+//        String.format("%s_2hop_cap%f_sz%d_old", suffixPath, capacity, path.size()), true);
 
     MapDrawer.drawAndWrite(graph, path,
         String.format("%s_2hop_cap%f_sz%d", suffixPath, capacity, path.size()), true);
@@ -54,6 +54,15 @@ public class SandBox {
     runHop(graph, capacity, suffixPath);
   }
 
+  public static void exp2(Points points, String suffixPath) {
+    double c = 5 * 0.001;
+    for (int i = 0; i < 12; i++) {
+      double capacity = c * Math.pow(2, i);
+      solve(points, capacity, suffixPath);
+    }
+  }
+
+
   public static void exp1(Points points, String suffixPath) {
     for (double capacity = 0.02; capacity <= 0.04; capacity += 0.001) {
       solve(points, capacity, suffixPath);
@@ -82,7 +91,7 @@ public class SandBox {
 
     Graph graph = generateAndDraw(points, capacity, epsilon, island);
     runHop(graph, capacity, island);
-//
+
 //    exp0(points, epsilon, island);
 
 //    MyPolygon myPolygon = new MyPolygon(points);
@@ -96,7 +105,9 @@ public class SandBox {
 //      runHop(graph, capacity, island);
 //    }
 
-    exp1(points, island);
+//    exp1(points, island);
+
+    exp2(points, island);
 
 
 
