@@ -7,7 +7,6 @@ import static RocioBorderProtection.IpeDraw.getIpeEnd;
 import static RocioBorderProtection.IpeDraw.getIpePreamble;
 import static RocioBorderProtection.IpeDraw.writeIpeText;
 
-import RocioBorderProtection.Edge.EdgeType;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,13 +21,13 @@ public class MapDrawer {
   private static final String normalDash = "normal";
   private static final String dashedDash = "dashed";
   private static final String dottedDash = "dotted";
-  
+
   private static final String defaultShape = "disk";
   private static final String defaultColor = blackColor;
   private static final String defaultSize = "normal";
   private static final String defaultPen = "normal";
   private static final String defaultDash = normalDash;
-  
+
   final double drawSize = 700;
   final double o = 200;
 
@@ -76,10 +75,10 @@ public class MapDrawer {
 
     output.append(getIpePreamble());
     output.append(getIpeConf());
-    drawVertexes(graph.getVertexList());
+//    drawVertexes(graph.getVertexList());
     drawPolygonEdges(points);
-    
-    drawEdges(graph.getAdjacencyMap().values());
+
+//    drawEdges(graph.getAdjacencyMap().values());
     drawPath(path);
 
 //    MyPolygon myPolygon = new MyPolygon(points);
@@ -122,11 +121,11 @@ public class MapDrawer {
     double maxX = Long.MIN_VALUE;
     double maxY = Long.MIN_VALUE;
     for (Point point : points.getPointList()) {
-      minX = Math.min(minX, point.getX());
-      minY = Math.min(minY, point.getY());
+      minX = Math.min(minX, point.x());
+      minY = Math.min(minY, point.y());
 
-      maxX = Math.max(maxX, point.getX());
-      maxY = Math.max(maxY, point.getY());
+      maxX = Math.max(maxX, point.x());
+      maxY = Math.max(maxY, point.y());
     }
 
     double deltaX = maxX - minX;
@@ -144,14 +143,14 @@ public class MapDrawer {
 
   private void drawText(String string, Point point, String color, String size) {
     double eps = 3;
-    double x = scaleX(point.getX());
-    double y = scaleY(point.getY());
+    double x = scaleX(point.x());
+    double y = scaleY(point.y());
     output.append(writeIpeText(string, x - eps, y + eps, color, size));
   }
 
   private void drawPoint(Point point, String shape, String color, String size) {
-    double x = scaleX(point.getX());
-    double y = scaleY(point.getY());
+    double x = scaleX(point.x());
+    double y = scaleY(point.y());
     output.append(drawIpeMark(x, y, shape, color, size));
   }
 
@@ -190,11 +189,11 @@ public class MapDrawer {
   }
 
   private void drawEdge(Point u, Point v, String color, String pen, String dash) {
-    double ux = scaleX(u.getX());
-    double uy = scaleY(u.getY());
+    double ux = scaleX(u.x());
+    double uy = scaleY(u.y());
 
-    double vx = scaleX(v.getX());
-    double vy = scaleY(v.getY());
+    double vx = scaleX(v.x());
+    double vy = scaleY(v.y());
 
     output.append(drawIpePath(new double[]{ux, vx}, new double[]{uy, vy}, color, pen, dash));
   }
@@ -243,9 +242,10 @@ public class MapDrawer {
       drawPoint(point, defaultShape, color, defaultSize);
 
       if (addText) {
-        if (index % 10 == 0) {
-          drawText(Integer.toString(index), point, color, defaultSize);
-        }
+//        if (index % 10 == 0) {
+//          drawText(Integer.toString(index), point, color, defaultSize);
+//        }
+        drawText(Integer.toString(index), point, color, defaultSize);
         index++;
       }
     }
@@ -255,7 +255,9 @@ public class MapDrawer {
         Point u = edge.getU().getPoint();
         Point v = edge.getV().getPoint();
 
-        String dash = edge.getEdgeType().equals(EdgeType.BOUNDARY) ? dottedDash : normalDash;
+//        String dash = edge.getEdgeType().equals(EdgeType.BOUNDARY) ? dottedDash : normalDash;
+        String dash = defaultDash;
+
         drawEdge(u, v, color, defaultPen, dash);
       }
     }
@@ -268,7 +270,7 @@ public class MapDrawer {
     String dash = dashedDash;
 
 //    drawPoints(points, defaultShape, color, defaultSize);
-    
+
     drawPolygonEdges(points, color, defaultPen, dash);
 
   }
